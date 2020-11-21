@@ -1,4 +1,4 @@
-; Sat Nov 21 13:36:42 CET 2020
+; Sat Nov 21 13:54:17 CET 2020
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -20,14 +20,14 @@
 ([BROWSER_SLOT_NAMES] of  Property_List
 
 	(properties
-		[museum_ProjectKB_Instance_10140]
-		[museum_ProjectKB_Instance_10141]
-		[museum_ProjectKB_Instance_10142]
-		[museum_ProjectKB_Instance_10143]
-		[museum_ProjectKB_Instance_10144]
-		[museum_ProjectKB_Instance_10145]
-		[museum_ProjectKB_Instance_10146]
-		[museum_ProjectKB_Instance_10147]))
+		[museum_ProjectKB_Instance_0]
+		[museum_ProjectKB_Instance_1]
+		[museum_ProjectKB_Instance_2]
+		[museum_ProjectKB_Instance_3]
+		[museum_ProjectKB_Instance_4]
+		[museum_ProjectKB_Instance_5]
+		[museum_ProjectKB_Instance_6]
+		[museum_ProjectKB_Instance_7]))
 
 ([CLSES_TAB] of  Widget
 
@@ -499,65 +499,65 @@
 	(name "layout properties")
 	(properties [VERTICAL_STRETCHER]))
 
-([museum_ProjectKB_Instance_10140] of  String
-
-	(name "Artista")
-	(string_value "nombre_artista"))
-
-([museum_ProjectKB_Instance_10141] of  String
+([museum_ProjectKB_Instance_0] of  String
 
 	(name "Cuadro")
 	(string_value "titulo"))
 
-([museum_ProjectKB_Instance_10142] of  String
-
-	(name ":INSTANCE-ANNOTATION")
-	(string_value "%3AANNOTATION-TEXT"))
-
-([museum_ProjectKB_Instance_10143] of  String
-
-	(name ":PAL-CONSTRAINT")
-	(string_value "%3APAL-NAME"))
-
-([museum_ProjectKB_Instance_10144] of  String
-
-	(name ":META-CLASS")
-	(string_value "%3ANAME"))
-
-([museum_ProjectKB_Instance_10145] of  String
+([museum_ProjectKB_Instance_1] of  String
 
 	(name "Epoca")
 	(string_value "nombre_epoca"))
 
-([museum_ProjectKB_Instance_10146] of  String
+([museum_ProjectKB_Instance_108] of  Map
+
+	(entries
+		[museum_ProjectKB_Instance_8]
+		[museum_ProjectKB_Instance_9]))
+
+([museum_ProjectKB_Instance_2] of  String
 
 	(name "Tematica")
 	(string_value "nombre_tematica"))
 
-([museum_ProjectKB_Instance_10147] of  String
+([museum_ProjectKB_Instance_3] of  String
 
 	(name "Estilo")
 	(string_value "nombre_estilo"))
 
-([museum_ProjectKB_Instance_10148] of  Map_Entry
+([museum_ProjectKB_Instance_4] of  String
+
+	(name ":INSTANCE-ANNOTATION")
+	(string_value "%3AANNOTATION-TEXT"))
+
+([museum_ProjectKB_Instance_5] of  String
+
+	(name ":PAL-CONSTRAINT")
+	(string_value "%3APAL-NAME"))
+
+([museum_ProjectKB_Instance_6] of  String
+
+	(name ":META-CLASS")
+	(string_value "%3ANAME"))
+
+([museum_ProjectKB_Instance_7] of  String
+
+	(name "Artista")
+	(string_value "nombre_artista"))
+
+([museum_ProjectKB_Instance_8] of  Map_Entry
 
 	(key "change_tracking_active")
 	(key_class "java.lang.String")
 	(value "false")
 	(value_class "java.lang.String"))
 
-([museum_ProjectKB_Instance_10149] of  Map_Entry
+([museum_ProjectKB_Instance_9] of  Map_Entry
 
 	(key "add_name_on_instance_form")
 	(key_class "java.lang.String")
 	(value "false")
 	(value_class "java.lang.String"))
-
-([museum_ProjectKB_Instance_108] of  Map
-
-	(entries
-		[museum_ProjectKB_Instance_10148]
-		[museum_ProjectKB_Instance_10149]))
 
 ([museum_ProjectKB_Instance_96] of  String
 

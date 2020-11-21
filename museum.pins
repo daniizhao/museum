@@ -1,4 +1,4 @@
-; Sat Nov 21 13:36:42 CET 2020
+; Sat Nov 21 13:54:17 CET 2020
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -7,9 +7,9 @@
 
 	(ano 1500)
 	(dimensiones "220 x 389")
-	(pertenece_a_epoca [museum_Instance_2])
-	(pertenece_a_estilo [museum_Instance_5])
-	(pertenece_a_tematica [museum_Instance_1])
+	(es_de_epoca [museum_Instance_2])
+	(es_de_estilo [museum_Instance_5])
+	(es_de_tematica [museum_Instance_1])
 	(pintado_por [museum_Instance_3])
 	(titulo "Triptico del Jardin de las Delicias"))
 
@@ -32,9 +32,9 @@
 
 	(ano 1872)
 	(dimensiones "48 x 63")
-	(pertenece_a_epoca [museum_Instance_8])
-	(pertenece_a_estilo [museum_Instance_14])
-	(pertenece_a_tematica [museum_Instance_12])
+	(es_de_epoca [museum_Instance_8])
+	(es_de_estilo [museum_Instance_14])
+	(es_de_tematica [museum_Instance_12])
 	(pintado_por [museum_Instance_13])
 	(titulo "Amanecer"))
 
@@ -74,9 +74,9 @@
 
 	(ano 1875)
 	(dimensiones "100 x 82")
-	(pertenece_a_epoca [museum_Instance_8])
-	(pertenece_a_estilo [museum_Instance_14])
-	(pertenece_a_tematica [museum_Instance_16])
+	(es_de_epoca [museum_Instance_8])
+	(es_de_estilo [museum_Instance_14])
+	(es_de_tematica [museum_Instance_16])
 	(pintado_por [museum_Instance_13])
 	(titulo "Mujer con sombrilla"))
 
@@ -97,9 +97,9 @@
 
 	(ano 1507)
 	(dimensiones "77 x 53")
-	(pertenece_a_epoca [museum_Instance_2])
-	(pertenece_a_estilo [museum_Instance_19])
-	(pertenece_a_tematica [museum_Instance_16])
+	(es_de_epoca [museum_Instance_2])
+	(es_de_estilo [museum_Instance_19])
+	(es_de_tematica [museum_Instance_16])
 	(pintado_por [museum_Instance_18])
 	(titulo "La Gioconda"))
 
@@ -139,9 +139,9 @@
 
 	(ano 1495)
 	(dimensiones "460 x 880")
-	(pertenece_a_epoca [museum_Instance_2])
-	(pertenece_a_estilo [museum_Instance_19])
-	(pertenece_a_tematica [museum_Instance_21])
+	(es_de_epoca [museum_Instance_2])
+	(es_de_estilo [museum_Instance_19])
+	(es_de_tematica [museum_Instance_21])
 	(pintado_por [museum_Instance_18])
 	(titulo "La ultima cena"))
 
@@ -157,9 +157,9 @@
 
 	(ano 1889)
 	(dimensiones "73 x 92")
-	(pertenece_a_epoca [museum_Instance_8])
-	(pertenece_a_estilo [museum_Instance_14])
-	(pertenece_a_tematica [museum_Instance_12])
+	(es_de_epoca [museum_Instance_8])
+	(es_de_estilo [museum_Instance_14])
+	(es_de_tematica [museum_Instance_12])
 	(pintado_por [museum_Instance_23])
 	(titulo "La noche estrellada"))
 
@@ -176,9 +176,9 @@
 
 	(ano 1888)
 	(dimensiones "72 x 90")
-	(pertenece_a_epoca [museum_Instance_8])
-	(pertenece_a_estilo [museum_Instance_14])
-	(pertenece_a_tematica [museum_Instance_21])
+	(es_de_epoca [museum_Instance_8])
+	(es_de_estilo [museum_Instance_14])
+	(es_de_tematica [museum_Instance_21])
 	(pintado_por [museum_Instance_23])
 	(titulo "El dormitorio de Van Gogh en Arle"))
 
@@ -186,9 +186,9 @@
 
 	(ano 1819)
 	(dimensiones "146 x 83")
-	(pertenece_a_epoca [museum_Instance_27])
-	(pertenece_a_estilo [museum_Instance_29])
-	(pertenece_a_tematica [museum_Instance_26])
+	(es_de_epoca [museum_Instance_27])
+	(es_de_estilo [museum_Instance_29])
+	(es_de_tematica [museum_Instance_26])
 	(pintado_por [museum_Instance_28])
 	(titulo "Saturno devorando a su hijo"))
 
@@ -239,9 +239,9 @@
 
 	(ano 1800)
 	(dimensiones "97 x 190")
-	(pertenece_a_epoca [museum_Instance_27])
-	(pertenece_a_estilo [museum_Instance_29])
-	(pertenece_a_tematica [museum_Instance_31])
+	(es_de_epoca [museum_Instance_27])
+	(es_de_estilo [museum_Instance_29])
+	(es_de_tematica [museum_Instance_31])
 	(pintado_por [museum_Instance_28])
 	(titulo "La maja desnuda"))
 
@@ -254,9 +254,9 @@
 
 	(ano 1753)
 	(dimensiones "174 x 123")
-	(pertenece_a_epoca [museum_Instance_27])
-	(pertenece_a_estilo [museum_Instance_34])
-	(pertenece_a_tematica [museum_Instance_12])
+	(es_de_epoca [museum_Instance_27])
+	(es_de_estilo [museum_Instance_34])
+	(es_de_tematica [museum_Instance_12])
 	(pintado_por [museum_Instance_33])
 	(titulo "The Bathing Pool"))
 
@@ -280,9 +280,9 @@
 
 	(ano 1706)
 	(dimensiones "115 x 145")
-	(pertenece_a_epoca [museum_Instance_36])
-	(pertenece_a_estilo [museum_Instance_37])
-	(pertenece_a_tematica [museum_Instance_21])
+	(es_de_epoca [museum_Instance_36])
+	(es_de_estilo [museum_Instance_37])
+	(es_de_tematica [museum_Instance_21])
 	(pintado_por [museum_Instance_33])
 	(titulo "The Grande Galerie"))
 
@@ -303,9 +303,9 @@
 
 	(ano 1664)
 	(dimensiones "46 x 40")
-	(pertenece_a_epoca [museum_Instance_39])
-	(pertenece_a_estilo [museum_Instance_41])
-	(pertenece_a_tematica [museum_Instance_16])
+	(es_de_epoca [museum_Instance_39])
+	(es_de_estilo [museum_Instance_41])
+	(es_de_tematica [museum_Instance_16])
 	(pintado_por [museum_Instance_40])
 	(titulo "La joven de la perla"))
 
@@ -343,9 +343,9 @@
 
 	(ano 1658)
 	(dimensiones "44 x 41")
-	(pertenece_a_epoca [museum_Instance_39])
-	(pertenece_a_estilo [museum_Instance_41])
-	(pertenece_a_tematica [museum_Instance_16])
+	(es_de_epoca [museum_Instance_39])
+	(es_de_estilo [museum_Instance_41])
+	(es_de_tematica [museum_Instance_16])
 	(pintado_por [museum_Instance_40])
 	(titulo "La lechera"))
 
@@ -353,9 +353,9 @@
 
 	(ano 1937)
 	(dimensiones "349 x 777")
-	(pertenece_a_epoca [museum_Instance_8])
-	(pertenece_a_estilo [museum_Instance_46])
-	(pertenece_a_tematica [museum_Instance_44])
+	(es_de_epoca [museum_Instance_8])
+	(es_de_estilo [museum_Instance_46])
+	(es_de_tematica [museum_Instance_44])
 	(pintado_por [museum_Instance_45])
 	(titulo "Guernica"))
 
@@ -384,9 +384,9 @@
 
 	(ano 1937)
 	(dimensiones "60 x 49")
-	(pertenece_a_epoca [museum_Instance_8])
-	(pertenece_a_estilo [museum_Instance_46])
-	(pertenece_a_tematica [museum_Instance_16])
+	(es_de_epoca [museum_Instance_8])
+	(es_de_estilo [museum_Instance_46])
+	(es_de_tematica [museum_Instance_16])
 	(pintado_por [museum_Instance_45])
 	(titulo "La mujer que llora"))
 
@@ -394,9 +394,9 @@
 
 	(ano 1931)
 	(dimensiones "24 x 33")
-	(pertenece_a_epoca [museum_Instance_8])
-	(pertenece_a_estilo [museum_Instance_50])
-	(pertenece_a_tematica [museum_Instance_12])
+	(es_de_epoca [museum_Instance_8])
+	(es_de_estilo [museum_Instance_50])
+	(es_de_tematica [museum_Instance_12])
 	(pintado_por [museum_Instance_49])
 	(titulo "La persistencia de la memoria"))
 
@@ -428,9 +428,9 @@
 
 	(ano 1482)
 	(dimensiones "172 x 278")
-	(pertenece_a_epoca [museum_Instance_2])
-	(pertenece_a_estilo [museum_Instance_53])
-	(pertenece_a_tematica [museum_Instance_26])
+	(es_de_epoca [museum_Instance_2])
+	(es_de_estilo [museum_Instance_53])
+	(es_de_tematica [museum_Instance_26])
 	(pintado_por [museum_Instance_52])
 	(titulo "El nacimiento de Venus"))
 
@@ -454,9 +454,9 @@
 
 	(ano 1944)
 	(dimensiones "49 x 60")
-	(pertenece_a_epoca [museum_Instance_8])
-	(pertenece_a_estilo [museum_Instance_50])
-	(pertenece_a_tematica [museum_Instance_12])
+	(es_de_epoca [museum_Instance_8])
+	(es_de_estilo [museum_Instance_50])
+	(es_de_tematica [museum_Instance_12])
 	(pintado_por [museum_Instance_49])
 	(titulo "Los Elefantes"))
 
@@ -464,9 +464,9 @@
 
 	(ano 1642)
 	(dimensiones "359 x 439")
-	(pertenece_a_epoca [museum_Instance_39])
-	(pertenece_a_estilo [museum_Instance_41])
-	(pertenece_a_tematica [museum_Instance_16])
+	(es_de_epoca [museum_Instance_39])
+	(es_de_estilo [museum_Instance_41])
+	(es_de_tematica [museum_Instance_16])
 	(pintado_por [museum_Instance_56])
 	(titulo "La ronda de noche"))
 
@@ -483,9 +483,9 @@
 
 	(ano 1626)
 	(dimensiones "25 x 32")
-	(pertenece_a_epoca [museum_Instance_39])
-	(pertenece_a_estilo [museum_Instance_41])
-	(pertenece_a_tematica [museum_Instance_16])
+	(es_de_epoca [museum_Instance_39])
+	(es_de_estilo [museum_Instance_41])
+	(es_de_tematica [museum_Instance_16])
 	(pintado_por [museum_Instance_56])
 	(titulo "El pintor en su estudio"))
 
@@ -493,9 +493,9 @@
 
 	(ano 1902)
 	(dimensiones "74 x 93")
-	(pertenece_a_epoca [museum_Instance_8])
-	(pertenece_a_estilo [museum_Instance_14])
-	(pertenece_a_tematica [museum_Instance_12])
+	(es_de_epoca [museum_Instance_8])
+	(es_de_estilo [museum_Instance_14])
+	(es_de_tematica [museum_Instance_12])
 	(pintado_por [museum_Instance_59])
 	(titulo "Chateau Noir"))
 
@@ -512,9 +512,9 @@
 
 	(ano 1907)
 	(dimensiones "180 x 180")
-	(pertenece_a_epoca [museum_Instance_8])
-	(pertenece_a_estilo [museum_Instance_10])
-	(pertenece_a_tematica [museum_Instance_7])
+	(es_de_epoca [museum_Instance_8])
+	(es_de_estilo [museum_Instance_10])
+	(es_de_tematica [museum_Instance_7])
 	(pintado_por [museum_Instance_9])
 	(titulo "El Beso"))
 
@@ -522,9 +522,9 @@
 
 	(ano 1880)
 	(dimensiones "33 x 26")
-	(pertenece_a_epoca [museum_Instance_8])
-	(pertenece_a_estilo [museum_Instance_14])
-	(pertenece_a_tematica [museum_Instance_16])
+	(es_de_epoca [museum_Instance_8])
+	(es_de_estilo [museum_Instance_14])
+	(es_de_tematica [museum_Instance_16])
 	(pintado_por [museum_Instance_59])
 	(titulo "Autoretrato"))
 
@@ -532,9 +532,9 @@
 
 	(ano 1477)
 	(dimensiones "203 x 314")
-	(pertenece_a_epoca [museum_Instance_2])
-	(pertenece_a_estilo [museum_Instance_53])
-	(pertenece_a_tematica [museum_Instance_1])
+	(es_de_epoca [museum_Instance_2])
+	(es_de_estilo [museum_Instance_53])
+	(es_de_tematica [museum_Instance_1])
 	(pintado_por [museum_Instance_52])
 	(titulo "Alegoria de la primavera"))
 
@@ -542,9 +542,9 @@
 
 	(ano 1911)
 	(dimensiones "140 x 189")
-	(pertenece_a_epoca [museum_Instance_8])
-	(pertenece_a_estilo [museum_Instance_65])
-	(pertenece_a_tematica [museum_Instance_63])
+	(es_de_epoca [museum_Instance_8])
+	(es_de_estilo [museum_Instance_65])
+	(es_de_tematica [museum_Instance_63])
 	(pintado_por [museum_Instance_64])
 	(titulo "Vaca Amarilla"))
 
@@ -576,9 +576,9 @@
 
 	(ano 1913)
 	(dimensiones "200 x 300")
-	(pertenece_a_epoca [museum_Instance_8])
-	(pertenece_a_estilo [museum_Instance_65])
-	(pertenece_a_tematica [museum_Instance_67])
+	(es_de_epoca [museum_Instance_8])
+	(es_de_estilo [museum_Instance_65])
+	(es_de_tematica [museum_Instance_67])
 	(pintado_por [museum_Instance_68])
 	(titulo "Composicion VII"))
 
@@ -600,9 +600,9 @@
 
 	(ano 1913)
 	(dimensiones "200 x 130")
-	(pertenece_a_epoca [museum_Instance_8])
-	(pertenece_a_estilo [museum_Instance_65])
-	(pertenece_a_tematica [museum_Instance_63])
+	(es_de_epoca [museum_Instance_8])
+	(es_de_estilo [museum_Instance_65])
+	(es_de_tematica [museum_Instance_63])
 	(pintado_por [museum_Instance_64])
 	(titulo "La torre de los caballos azules"))
 
@@ -615,9 +615,9 @@
 
 	(ano 1565)
 	(dimensiones "117 x 162")
-	(pertenece_a_epoca [museum_Instance_2])
-	(pertenece_a_estilo [museum_Instance_5])
-	(pertenece_a_tematica [museum_Instance_12])
+	(es_de_epoca [museum_Instance_2])
+	(es_de_estilo [museum_Instance_5])
+	(es_de_tematica [museum_Instance_12])
 	(pintado_por [museum_Instance_71])
 	(titulo "Los cazadores en la nieve"))
 
@@ -632,9 +632,9 @@
 
 	(ano 1923)
 	(dimensiones "65 x 100")
-	(pertenece_a_epoca [museum_Instance_8])
-	(pertenece_a_estilo [museum_Instance_50])
-	(pertenece_a_tematica [museum_Instance_67])
+	(es_de_epoca [museum_Instance_8])
+	(es_de_estilo [museum_Instance_50])
+	(es_de_tematica [museum_Instance_67])
 	(pintado_por [museum_Instance_73])
 	(titulo "El cazador"))
 
@@ -649,9 +649,9 @@
 
 	(ano 1908)
 	(dimensiones "178 x 178")
-	(pertenece_a_epoca [museum_Instance_8])
-	(pertenece_a_estilo [museum_Instance_10])
-	(pertenece_a_tematica [museum_Instance_1])
+	(es_de_epoca [museum_Instance_8])
+	(es_de_estilo [museum_Instance_10])
+	(es_de_tematica [museum_Instance_1])
 	(pintado_por [museum_Instance_9])
 	(titulo "Tod und Leben"))
 
