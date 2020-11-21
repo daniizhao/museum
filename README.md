@@ -7,3 +7,7 @@ Contributors:
 - Marçal Comas Oliver
 - Gerard Palomares Castells
 - Daniela Zhao
+
+## Considerations
+
+- To create the ontology graph: Open terminal in directory of the project and execute: ```dot -o museum.jpg -Tjpg museum.dot```
