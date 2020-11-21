@@ -1058,37 +1058,96 @@
 )
 
 
+
 ;;; --------------------------------------------------
 ;;;                  modulo MAIN
 ;;; --------------------------------------------------
+(defmodule MAIN (export ?ALL))
 
 ;;; regla inicial en el modulo MAIN
-(defrule init
-	(declare (salience 10))
+(defrule MAIN::init
+	(declare (salience 10)) ; pondemos prioridad 10 para que sea la primera regla que se ejecute
 	=>
-	(printout t "Bienvenido al Museo! Responde las siguientes preguntas para conseguir una visita personalizada!" crlf)
-	(focus datosGrupo)
+	(printout t crlf crlf)
+	(printout t "Bienvenido al Museo!" crlf "Responde las siguientes preguntas para conseguir una visita personalizada!")
+	(printout t crlf crlf)
+	(focus recoger-datos)
 )
-
-;;; --------------------------------------------------
-;;;                 modulo datos-grupo
-;;; --------------------------------------------------
-
-;;; modulo para recoger datos. exportamos todo
-(defmodule datosGrupo (export ?ALL))
 
 ;;; templates del modulo
-(deftemplate grupo
-	(slot tipo)
-	(slot num_dias)
-	(slot horas_dia)
-	(slot grado_conocimiento)
-	(slot preferencia (type INSTANCE))
+(deftemplate MAIN::grupo
+	(slot tipo (type STRING) (default "Individual"))
+	(slot num_dias (type INTEGER) (default -1))
+	(slot horas_dia (type INTEGER) (default -1))
+	(slot grado_conocimiento (type INTEGER) (default -1))
 )
 
+(deftemplate MAIN::solucion
+	(multislot cuadros)
+)
+
+;;; --------------------------------------------------
+;;;                  functions
+;;; --------------------------------------------------
+
+; añadir funcion para preguntas que reciben como respuesta numeros. extraida de FAQ-CLIPS
+(deffunction pregunta-numerica (?pregunta ?rangini ?rangfi)
+	(format t "%s [%d, %d] " ?pregunta ?rangini ?rangfi)
+	(bind ?respuesta (read))
+	(while (not(and(>= ?respuesta ?rangini)(<= ?respuesta ?rangfi))) do
+		(format t "¿%s? [%d, %d]" ?pregunta ?rangini ?rangfi)
+		(bind ?respuesta (read))
+	)
+	?respuesta
+)
+
+; funcion para preguntas con diferentes opciones
+(deffunction MAIN::pregunta-opciones (?pregunta $?opciones)
+	(printout t ?pregunta crlf)
+	(bind ?i 1)
+	(progn$ (?op ?opciones)
+		(format t "%d - %s" ?i ?op)
+		(printout t crlf)
+		(bind ?i (+ ?i 1))
+	)
+	(bind ?respuesta (pregunta-numerica "Escoge una opcion:" 1 (length$ ?opciones)))
+	?respuesta
+)
+
+; funcion para preguntas de tipo si/no
+(deffunction MAIN::pregunta-binaria (?pregunta)
+	(bind ?respuesta (pregunta-opciones ?pregunta si no s n))
+	(if (or (eq ?respuesta si) (eq ?respuesta s))
+		then TRUE
+		else FALSE
+	)
+)
+
+; TODO: añadir funcion para preguntas multi-respuestas (preferencias)
+
+;;; --------------------------------------------------
+;;;                 modulo recoger-datos
+;;; --------------------------------------------------
+
+;;; modulo para recoger datos del grupo de visita. exportamos todo
+(defmodule recoger-datos (import MAIN ?ALL) (export ?ALL))
+
+;;; templates del modulo
+
 ;;; reglas del modulo
-(defrule datosGrupo::preguntas
-	(declare (salience 10))
+(defrule recoger-datos::preguntas
+	;(declare (salience 10))
+	(not (grupo)) 
 	=>
-	(printout t "Que tipo de grupo sois?" crlf)
+	(bind ?i_resp (pregunta-opciones "¿Que tipo de grupo sois?" Individual Familia Grupo-Pequeno Grupo-Grande))
+	; asignar el tipo correcto a la visita
+	(switch ?i_resp
+		(case 1 then (bind ?respuesta "Individual"))
+		(case 2 then (bind ?respuesta "Familia"))
+		(case 3 then (bind ?respuesta "Grupo Pequeno"))
+		(case 4 then (bind ?respuesta "Grupo Grande"))
+		(default (printout t "error" crlf))
+	)
+	;(printout t "Has escogido:" ?respuesta crlf)
+	(assert (grupo (tipo ?respuesta)) )
 )
