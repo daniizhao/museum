@@ -1076,21 +1076,28 @@
 
 ;;; templates del modulo
 (deftemplate MAIN::grupo
-	(slot tipo (type STRING) (default "Individual"))
+	(slot tipo (type STRING) (default "tipo"))
 	(slot num_dias (type INTEGER) (default -1))
 	(slot horas_dia (type INTEGER) (default -1))
 	(slot grado_conocimiento (type INTEGER) (default -1))
 )
 
+(deftemplate MAIN::preferencias-grupo
+	(multislot pref_artistas (type INSTANCE) )
+	(multislot pref_tematicas (type INSTANCE) )
+	(multislot pref_epocas (type INSTANCE) )
+	(multislot pref_estilos (type INSTANCE) )
+)
+
 (deftemplate MAIN::solucion
-	(multislot cuadros)
+	(multislot cuadros (type INSTANCE))
 )
 
 ;;; --------------------------------------------------
 ;;;                  functions
 ;;; --------------------------------------------------
 
-; añadir funcion para preguntas que reciben como respuesta numeros. extraida de FAQ-CLIPS
+; funcion para preguntas que reciben como respuesta numeros. extraida de FAQ-CLIPS
 (deffunction pregunta-numerica (?pregunta ?rangini ?rangfi)
 	(format t "%s [%d, %d] " ?pregunta ?rangini ?rangfi)
 	(bind ?respuesta (read))
@@ -1098,6 +1105,14 @@
 		(format t "¿%s? [%d, %d]" ?pregunta ?rangini ?rangfi)
 		(bind ?respuesta (read))
 	)
+	?respuesta
+)
+
+; funcion para preguntas numericas con multiple solucion
+(deffunction pregunta-numerica-mult (?pregunta ?rangini ?rangfi)
+	(format t "%s [%d, %d] " ?pregunta ?rangini ?rangfi)
+	(bind ?list_resp (readline))
+	(bind ?respuesta (str-explode ?list_resp))
 	?respuesta
 )
 
@@ -1123,7 +1138,18 @@
 	)
 )
 
-; TODO: añadir funcion para preguntas multi-respuestas (preferencias)
+; funcion para preguntas con diferentes opciones con respuesta multiple
+(deffunction MAIN::pregunta-opciones-mult (?pregunta $?opciones)
+	(printout t ?pregunta crlf)
+	(bind ?i 1)
+	(progn$ (?op ?opciones)
+		(format t "%d - %s" ?i ?op)
+		(printout t crlf)
+		(bind ?i (+ ?i 1))
+	)
+	(bind ?respuesta (pregunta-numerica-mult "Escribe las respuestas separadas por un espacio:" 1 (length$ ?opciones)))
+	?respuesta
+)
 
 ;;; --------------------------------------------------
 ;;;                 modulo recoger-datos
@@ -1135,8 +1161,8 @@
 ;;; templates del modulo
 
 ;;; reglas del modulo
-(defrule recoger-datos::preguntas
-	;(declare (salience 10))
+; primera pregunta, que tipo de grupo es
+(defrule recoger-datos::pregunta-grupo
 	(not (grupo)) 
 	=>
 	(bind ?i_resp (pregunta-opciones "¿Que tipo de grupo sois?" Individual Familia Grupo-Pequeno Grupo-Grande))
@@ -1148,6 +1174,69 @@
 		(case 4 then (bind ?respuesta "Grupo Grande"))
 		(default (printout t "error" crlf))
 	)
-	;(printout t "Has escogido:" ?respuesta crlf)
+	(printout t crlf)
 	(assert (grupo (tipo ?respuesta)) )
 )
+
+; preguntar dias de visita
+(defrule recoger-datos::pregunta-dias
+	?grupo <- (grupo (num_dias ?num_dias))
+	(test (< ?num_dias 0))
+	=>
+	(bind ?resp (pregunta-numerica "¿Cuantos dias visitareis el museo?" 1 7))
+	; modificar el numero de dias del hecho
+	(printout t crlf)
+	(modify ?grupo (num_dias ?resp))
+)
+
+; preguntar horas de visita cada dia
+(defrule recoger-datos::pregunta-horas
+	?grupo <- (grupo (horas_dia ?horas))
+	(test (< ?horas 0))
+	=>
+	(bind ?resp (pregunta-numerica "¿Cuantas horas al dia visitareis el mueso?" 1 8))
+	; modificar el numero de dias del hecho
+	(printout t crlf)
+	(modify ?grupo (horas_dia ?resp))
+)
+
+(defrule recoger-datos::pregunta-preferencias
+	?g <- (grupo (tipo ?t) (num_dias ?nd) (horas_dia ?hd) )
+	(test (not(= (str-compare ?t "tipo") 0)))
+	(test (> ?nd 0))
+	(test (> ?hd 0))
+	=>
+	(focus recoger-preferencias)
+)
+
+
+;;; --------------------------------------------------
+;;;                 modulo recoger-preferencias
+;;; --------------------------------------------------
+(defmodule recoger-preferencias (import MAIN ?ALL) (import recoger-datos ?ALL) (export ?ALL))
+
+(defrule recoger-preferencias::preguntar-artistas
+	(not (preferencias-grupo))
+	=>
+	(bind ?lista_inst (find-all-instances ((?artista Artista)) TRUE) )
+	; obtener los nombres para mostrar al usuario
+	(bind ?lista (create$ )) ;inicializar lista vacia
+	(bind ?i 1)
+	(progn$ (?l ?lista_inst)
+		(bind ?nom_art (send ?l get-nombre_artista))
+		(bind ?lista (insert$ ?lista (+ (length$ ?lista) 1) ?nom_art)) ;anadir los nombres
+	)
+	(bind ?lista (insert$ ?lista (+ (length$ ?lista) 1) "Ninguno")) ;opcion de ninguno
+	
+	(bind ?i_resp (pregunta-opciones-mult "Escoge tus artistas favoritos: " ?lista))
+	; asignar las instancias escogidas
+	(bind ?respuestas (create$ ))
+	(progn$ (?r ?i_resp) 
+		(bind ?inst_artista (nth$ ?r ?lista_inst))
+		(bind ?respuestas (insert$ ?respuestas (+ (length$ ?respuestas) 1) ?inst_artista))
+	)
+	(assert (preferencias-grupo (pref_artistas ?respuestas)) )
+)
+
+
+
