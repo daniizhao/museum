@@ -1161,8 +1161,8 @@
 
 (defmessage-handler MAIN::Cuadro imprimir ()
 	(printout t "Titulo: " ?self:titulo crlf)
-	(printout t "Año: " ?self:ano crlf)
-	(printout t "Dimensiones: " ?self:dimensiones crlf)
+	(printout t "Ano: " ?self:ano crlf)
+	(printout t "Dimensiones: " ?self:dimensiones " cm" crlf)
 	(printout t "Artista: " (send ?self:pintado_por get-nombre_artista) crlf)
 	(printout t "Epoca: " (send ?self:es_de_epoca get-nombre_epoca) crlf)
 	(printout t "Estilo: " (send ?self:es_de_estilo get-nombre_estilo) crlf)
