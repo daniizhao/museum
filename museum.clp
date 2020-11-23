@@ -1066,7 +1066,7 @@
 
 ;;; regla inicial en el modulo MAIN
 (defrule MAIN::init
-	(declare (salience 10)) ; pondemos prioridad 10 para que sea la primera regla que se ejecute
+	(declare (salience 10)) ; poneemos prioridad 10 para que sea la primera regla que se ejecute
 	=>
 	(printout t crlf crlf)
 	(printout t "Bienvenido al Museo!" crlf "Responde las siguientes preguntas para conseguir una visita personalizada!")
@@ -1075,6 +1075,10 @@
 )
 
 ;;; templates del modulo
+(deftemplate MAIN::consultar_estado
+	(slot estado)
+)
+
 (deftemplate MAIN::grupo
 	(slot tipo (type STRING) (default "tipo"))
 	(slot num_dias (type INTEGER) (default -1))
@@ -1082,14 +1086,14 @@
 	(slot grado_conocimiento (type INTEGER) (default -1))
 )
 
-(deftemplate MAIN::preferencias-grupo
+(deftemplate MAIN::preferencias_grupo
 	(multislot pref_artistas (type INSTANCE) )
 	(multislot pref_tematicas (type INSTANCE) )
 	(multislot pref_epocas (type INSTANCE) )
 	(multislot pref_estilos (type INSTANCE) )
 )
 
-(deftemplate MAIN::solucion
+(deftemplate MAIN::cuadros_preferidos
 	(multislot cuadros (type INSTANCE))
 )
 
@@ -1098,7 +1102,7 @@
 ;;; --------------------------------------------------
 
 ; funcion para preguntas que reciben como respuesta numeros. extraida de FAQ-CLIPS
-(deffunction pregunta-numerica (?pregunta ?rangini ?rangfi)
+(deffunction MAIN::pregunta-numerica (?pregunta ?rangini ?rangfi)
 	(format t "%s [%d, %d] " ?pregunta ?rangini ?rangfi)
 	(bind ?respuesta (read))
 	(while (not(and(>= ?respuesta ?rangini)(<= ?respuesta ?rangfi))) do
@@ -1109,7 +1113,7 @@
 )
 
 ; funcion para preguntas numericas con multiple solucion
-(deffunction pregunta-numerica-mult (?pregunta ?rangini ?rangfi)
+(deffunction MAIN::pregunta-numerica-mult (?pregunta ?rangini ?rangfi)
 	(format t "%s [%d, %d] " ?pregunta ?rangini ?rangfi)
 	(bind ?list_resp (readline))
 	(bind ?respuesta (str-explode ?list_resp))
@@ -1152,13 +1156,29 @@
 )
 
 ;;; --------------------------------------------------
+;;;                 	mensajes
+;;; --------------------------------------------------
+
+(defmessage-handler MAIN::Cuadro imprimir ()
+	(printout t "Titulo: " ?self:titulo crlf)
+	(printout t "Año: " ?self:ano crlf)
+	(printout t "Dimensiones: " ?self:dimensiones crlf)
+	(printout t "Artista: " (send ?self:pintado_por get-nombre_artista) crlf)
+	(printout t "Epoca: " (send ?self:es_de_epoca get-nombre_epoca) crlf)
+	(printout t "Estilo: " (send ?self:es_de_estilo get-nombre_estilo) crlf)
+	(printout t "Tematica: " (send ?self:es_de_tematica get-nombre_tematica) crlf)
+	(printout t crlf)
+)
+
+;;; --------------------------------------------------
 ;;;                 modulo recoger-datos
 ;;; --------------------------------------------------
 
 ;;; modulo para recoger datos del grupo de visita. exportamos todo
-(defmodule recoger-datos (import MAIN ?ALL) (export ?ALL))
-
-;;; templates del modulo
+(defmodule recoger-datos
+	(import MAIN ?ALL)
+	(export ?ALL)
+)
 
 ;;; reglas del modulo
 ; primera pregunta, que tipo de grupo es
@@ -1213,10 +1233,13 @@
 ;;; --------------------------------------------------
 ;;;                 modulo recoger-preferencias
 ;;; --------------------------------------------------
-(defmodule recoger-preferencias (import MAIN ?ALL) (import recoger-datos ?ALL) (export ?ALL))
+(defmodule recoger-preferencias
+	(import MAIN ?ALL)
+	(export ?ALL)
+)
 
 (defrule recoger-preferencias::preguntar-artistas
-	(not (preferencias-grupo))
+	(not (preferencias_grupo))
 	=>
 	(bind ?lista_inst (find-all-instances ((?artista Artista)) TRUE) )
 	; obtener los nombres para mostrar al usuario
@@ -1235,8 +1258,107 @@
 		(bind ?inst_artista (nth$ ?r ?lista_inst))
 		(bind ?respuestas (insert$ ?respuestas (+ (length$ ?respuestas) 1) ?inst_artista))
 	)
-	(assert (preferencias-grupo (pref_artistas ?respuestas)) )
+	(printout t crlf)
+	(assert (preferencias_grupo (pref_artistas ?respuestas)))
+)
+
+(defrule recoger-preferencias::pasar-a-procesar
+	(declare (salience -1)) ; prioridad para que sea lo ultimo que ejecuta
+	=>
+	(printout t "Procesando datos..." crlf)
+	(focus procesar-datos)
 )
 
 
+;;; --------------------------------------------------
+;;;                 modulo procesar-datos
+;;; --------------------------------------------------
+(defmodule procesar-datos 
+	(import MAIN ?ALL) 
+	(export ?ALL)
+);
 
+; funcion sencilla que recoge todos los cuadros de los artistas favoritos
+(defrule procesar-datos::crea-hechos-artistas
+	(preferencias_grupo (pref_artistas $?art_prefs))
+	=>
+	(if (not(member (length$ $?art_prefs) $?art_prefs)) ; si el usuario NO ha introducido ninguno
+		then (progn$ (?a $?art_prefs)
+			(assert (artista ?a)) ; crear hechos para 
+		)
+	)
+)
+
+(defrule procesar-datos::crea-hecho-lista-preferidos
+	(not(cuadros_preferidos))
+	=>
+	(bind ?lista_vacia (create$ ))
+	(assert (cuadros_preferidos (cuadros ?lista_vacia)))
+)
+
+; anade mas relevancia a los cuadros del printor
+(defrule procesar-datos::add-preferidos-artista
+	?artista <- (artista ?art)
+	?inst_list <- (cuadros_preferidos (cuadros $?lista_prefs))
+	=>
+	(retract ?artista) ;eliminar hecho tratado
+	(bind ?lista_c_inst (find-all-instances ((?cuadro Cuadro)) TRUE ) ) ;obtenemos todas las instancias de cuadros
+	(progn$ (?c ?lista_c_inst)
+		(if (eq (send ?c get-pintado_por) (instance-name ?art)) ;si es del mismo artista 
+			then (if (not(member ?c $?lista_prefs)) ;y no esta ya en la lista, add
+					then (bind $?lista_prefs (insert$ $?lista_prefs (+ (length$ $?lista_prefs) 1) ?c))
+				)
+		)
+	)
+	(modify ?inst_list (cuadros $?lista_prefs))
+)
+
+(defrule procesar-datos::pasar-a-generar-sol
+	(declare (salience -1)) ; prioridad para que sea lo ultimo que ejecuta
+	=>
+	(printout t "Generando visita personalizada..." crlf)
+	(assert (tarea crear-sol))
+	(focus generar-sol)
+)
+
+
+;;; --------------------------------------------------
+;;;                 modulo generar-sol
+;;; --------------------------------------------------
+(defmodule generar-sol 
+	(import MAIN ?ALL) 
+	(import procesar-datos ?ALL)
+	(export ?ALL)
+);
+
+; dividir los cuadros en los dias que hay
+(defrule generar-sol::repartir-cuadros-dias
+	(grupo (num_dias ?nd) (horas_dia ?hd))
+	(cuadros_preferidos (cuadros $?lista_pref))
+	(tarea crear-sol)
+	=>
+	(bind ?cuadros_por_dia (/ (length$ $?lista_pref) ?nd))
+	(bind ?cuadros_sobran (mod (length$ $?lista_pref) ?nd))
+	(printout t crlf)
+	(bind ?ind_cuadro 1)
+	(loop-for-count (?i 1 ?nd) do
+		(if (and (eq ?i 1) (> ?cuadros_sobran 0)) ;si sobran cuadros, los ponemos en el primer dia (TODO: repartirlos mejor)
+			then 
+				(printout t "Dia 1: " crlf)
+				(loop-for-count (?j 1 (+ ?cuadros_por_dia ?cuadros_sobran))
+					(bind ?c (nth$ ?ind_cuadro $?lista_pref))
+					(printout t (send ?c imprimir))
+					(bind ?ind_cuadro (+ ?ind_cuadro 1))
+				)
+			else 
+				(printout t "Dia " ?i ": " crlf)
+				(loop-for-count (?j 1 ?cuadros_por_dia)
+					(bind ?c (nth$ ?ind_cuadro $?lista_pref))
+					(printout t (send ?c imprimir))
+					(bind ?ind_cuadro (+ ?ind_cuadro 1))
+				)
+		)
+		(printout t "----------------------" crlf)
+		(printout t crlf)
+	)
+)
