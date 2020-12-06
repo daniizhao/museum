@@ -1306,11 +1306,14 @@
 (defmessage-handler MAIN::Cuadro-puntuacion imprimir ()
 	(printout t "Titulo: " (send ?self:cuadro-instancia get-titulo) crlf)
 	(printout t "Puntuacion: " ?self:puntuacion crlf)
-	(printout t "Justificacion/es:" crlf)
 	(bind $?list_just ?self:justificacion)
-	(progn$ (?just ?list_just)
-		(printout t "- " ?just crlf)
+	(if (> (length$ $?list_just) 0) then
+		(printout t "Justificacion/es:" crlf)
+		(progn$ (?just ?list_just)
+			(printout t "- " ?just crlf)
+		)
 	)
+	(printout t crlf)
 )
 
 ;;; --------------------------------------------------
@@ -1408,9 +1411,11 @@
 	(bind ?i_resp (pregunta-opciones-mult "Escoge tus artistas favoritos: " ?lista))
 	; asignar las instancias escogidas
 	(bind ?respuestas (create$ ))
-	(progn$ (?r ?i_resp) 
-		(bind ?inst_artista (nth$ ?r ?lista_inst))
-		(bind ?respuestas (insert$ ?respuestas (+ (length$ ?respuestas) 1) ?inst_artista))
+	(progn$ (?r ?i_resp)
+		(if (not (= ?r (length$ ?lista))) then
+			(bind ?inst_artista (nth$ ?r ?lista_inst))
+			(bind ?respuestas (insert$ ?respuestas (+ (length$ ?respuestas) 1) ?inst_artista))
+		)
 	)
 	(printout t crlf)
 	(assert (recoger temas))
@@ -1435,9 +1440,11 @@
 	(bind ?i_resp (pregunta-opciones-mult "Escoge tus tematicas favoritas: " ?lista))
 	; asignar las instancias escogidas
 	(bind ?respuestas (create$ ))
-	(progn$ (?r ?i_resp) 
-		(bind ?inst_tematica (nth$ ?r ?lista_inst))
-		(bind ?respuestas (insert$ ?respuestas (+ (length$ ?respuestas) 1) ?inst_tematica))
+	(progn$ (?r ?i_resp)
+		(if (not (eq ?r (length$ ?lista))) then
+			(bind ?inst_tematica (nth$ ?r ?lista_inst))
+			(bind ?respuestas (insert$ ?respuestas (+ (length$ ?respuestas) 1) ?inst_tematica))
+		)
 	)
 	(printout t crlf)
 	(assert (recoger epocas))
@@ -1463,8 +1470,10 @@
 	; asignar las instancias escogidas
 	(bind ?respuestas (create$ ))
 	(progn$ (?r ?i_resp) 
-		(bind ?inst_ep (nth$ ?r ?lista_inst))
-		(bind ?respuestas (insert$ ?respuestas (+ (length$ ?respuestas) 1) ?inst_ep))
+		(if (not (eq ?r (length$ ?lista))) then
+			(bind ?inst_ep (nth$ ?r ?lista_inst))
+			(bind ?respuestas (insert$ ?respuestas (+ (length$ ?respuestas) 1) ?inst_ep))
+		)
 	)
 	(printout t crlf)
 	(assert (recoger estilos))
@@ -1489,9 +1498,11 @@
 	(bind ?i_resp (pregunta-opciones-mult "Escoge tus estilos favoritos: " ?lista))
 	; asignar las instancias escogidas
 	(bind ?respuestas (create$ ))
-	(progn$ (?r ?i_resp) 
-		(bind ?inst_est (nth$ ?r ?lista_inst))
-		(bind ?respuestas (insert$ ?respuestas (+ (length$ ?respuestas) 1) ?inst_est))
+	(progn$ (?r ?i_resp)
+		(if (not (eq ?r (length$ ?lista))) then 
+			(bind ?inst_est (nth$ ?r ?lista_inst))
+			(bind ?respuestas (insert$ ?respuestas (+ (length$ ?respuestas) 1) ?inst_est))
+		)
 	)
 	(printout t crlf)
 	(modify ?prefs_grupo (pref_estilos ?respuestas))
@@ -1529,7 +1540,7 @@
 (defrule procesar-datos::crea-hechos-artistas
 	(preferencias_grupo (pref_artistas $?art_prefs))
 	=>
-	(if (not(member (length$ $?art_prefs) $?art_prefs)) ; si el usuario NO ha introducido la opción ninguno
+	(if (> (length$ $?art_prefs) 0) ; si el usuario ha introducido artistas preferidos
 		then (progn$ (?a ?art_prefs)
 			(assert (artista ?a)) ; crear hechos para 
 		)
@@ -1540,7 +1551,7 @@
 (defrule procesar-datos::crea-hechos-tematicas
 	(preferencias_grupo (pref_tematicas $?tem_prefs))
 	=>
-	(if (not(member (length$ $?tem_prefs) $?tem_prefs)) ; si el usuario NO ha introducido la opción ninguno
+	(if (> (length$ $?tem_prefs) 0) ; si el usuario ha introducido temas preferidos
 		then (progn$ (?a ?tem_prefs)
 			(assert (tematica ?a)) ; crear hechos para 
 		)
@@ -1551,7 +1562,7 @@
 (defrule procesar-datos::crea-hechos-epocas
 	(preferencias_grupo (pref_epocas $?epoca_prefs))
 	=>
-	(if (not(member (length$ $?epoca_prefs) $?epoca_prefs)) ; si el usuario NO ha introducido la opción ninguno
+	(if (> (length$ $?epoca_prefs) 0) ; si el usuario ha introducido epocas preferidas
 		then (progn$ (?a ?epoca_prefs)
 			(assert (epoca ?a)) ; crear hechos para 
 		)
@@ -1562,7 +1573,7 @@
 (defrule procesar-datos::crea-hechos-estilos
 	(preferencias_grupo (pref_estilos $?estilo_prefs))
 	=>
-	(if (not(member (length$ $?estilo_prefs) $?estilo_prefs)) ; si el usuario NO ha introducido la opción ninguno
+	(if (> (length$ $?estilo_prefs) 0) ; si el usuario ha introducido estilos preferidos
 		then (progn$ (?a ?estilo_prefs)
 			(assert (estilo ?a)) ; crear hechos para 
 		)
@@ -1574,14 +1585,14 @@
 	?a <- (artista ?art_pref)
 	?c <-(object (is-a Cuadro) (pintado_por ?autor))
 	(test (eq (instance-name ?art_pref) ?autor))
-	?cp <- (object (is-a Cuadro-puntuacion) (cuadro-instancia ?c_inst) (puntuacion ?p) (justificacion $?just))
+	?cp <- (object (is-a Cuadro-puntuacion) (cuadro-instancia ?c_inst) (puntuacion ?p))
 	(test (eq (instance-name ?c) (instance-name ?c_inst)))
 	(not (procesado-cuadro-autor ?c ?art_pref)) ; nose si és necessari
 	=>
 	(bind ?nueva_p (+ ?p 1))
 	(send ?cp put-puntuacion ?nueva_p)
 	(bind ?nueva_just "Cuadro hecho por autor preferido")
-	(slot-insert$ ?cp justificacion (length$ $?just) ?nueva_just)
+	(slot-insert$ ?cp justificacion 1 ?nueva_just)
 	(assert (procesado-cuadro-autor ?c ?art_pref))
 )
 
@@ -1590,14 +1601,14 @@
 	?a <- (tematica ?tema_pref)
 	?c <-(object (is-a Cuadro) (es_de_tematica ?tema))
 	(test (eq (instance-name ?tema_pref) ?tema))
-	?cp <- (object (is-a Cuadro-puntuacion) (cuadro-instancia ?c_inst) (puntuacion ?p) (justificacion $?just))
+	?cp <- (object (is-a Cuadro-puntuacion) (cuadro-instancia ?c_inst) (puntuacion ?p))
 	(test (eq (instance-name ?c) (instance-name ?c_inst)))
 	(not (procesado-cuadro-tema ?c ?tema_pref)) ; nose si és necessari
 	=>
 	(bind ?nueva_p (+ ?p 1))
 	(send ?cp put-puntuacion ?nueva_p)
 	(bind ?nueva_just "Cuadro de tematica preferida")
-	(slot-insert$ ?cp justificacion (length$ $?just) ?nueva_just)
+	(slot-insert$ ?cp justificacion 1 ?nueva_just)
 	(assert (procesado-cuadro-tema ?c ?tema_pref))
 )
 
@@ -1606,14 +1617,14 @@
 	?a <- (epoca ?epoca_pref)
 	?c <-(object (is-a Cuadro) (es_de_epoca ?epoca))
 	(test (eq (instance-name ?epoca_pref) ?epoca))
-	?cp <- (object (is-a Cuadro-puntuacion) (cuadro-instancia ?c_inst) (puntuacion ?p) (justificacion $?just))
+	?cp <- (object (is-a Cuadro-puntuacion) (cuadro-instancia ?c_inst) (puntuacion ?p))
 	(test (eq (instance-name ?c) (instance-name ?c_inst)))
 	(not (procesado-cuadro-epoca ?c ?epoca_pref)) ; nose si és necessari
 	=>
 	(bind ?nueva_p (+ ?p 1))
 	(send ?cp put-puntuacion ?nueva_p)
 	(bind ?nueva_just "Cuadro de epoca preferida")
-	(slot-insert$ ?cp justificacion (length$ $?just) ?nueva_just)
+	(slot-insert$ ?cp justificacion 1 ?nueva_just)
 	(assert (procesado-cuadro-epoca ?c ?epoca_pref))
 )
 
@@ -1622,14 +1633,14 @@
 	?a <- (estilo ?estilo_pref)
 	?c <-(object (is-a Cuadro) (es_de_estilo ?estilo))
 	(test (eq (instance-name ?estilo_pref) ?estilo))
-	?cp <- (object (is-a Cuadro-puntuacion) (cuadro-instancia ?c_inst) (puntuacion ?p) (justificacion $?just))
+	?cp <- (object (is-a Cuadro-puntuacion) (cuadro-instancia ?c_inst) (puntuacion ?p))
 	(test (eq (instance-name ?c) (instance-name ?c_inst)))
 	(not (procesado-cuadro-estilo ?c ?estilo_pref)) ; nose si és necessari
 	=>
 	(bind ?nueva_p (+ ?p 1))
 	(send ?cp put-puntuacion ?nueva_p)
 	(bind ?nueva_just "Cuadro de estilo preferido")
-	(slot-insert$ ?cp justificacion (length$ $?just) ?nueva_just)
+	(slot-insert$ ?cp justificacion 1 ?nueva_just)
 	(assert (procesado-cuadro-estilo ?c ?estilo_pref))
 )
 
