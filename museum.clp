@@ -1176,6 +1176,25 @@
 		(pertenece_a [museum_Instance_8]))
 )
 
+;;; --------------------------------------------------
+;;;                  Clases nuestras
+;;; --------------------------------------------------
+(defclass Cuadro-puntuacion "puntuacion de un cuadro"
+	(is-a USER)
+	(role concrete)
+	(slot cuadro-instancia 
+		(type INSTANCE)
+		(create-accessor read-write))
+	(slot puntuacion 
+		(type INTEGER)
+		(create-accessor read-write))
+	(multislot justificacion 
+		(type STRING)
+		(create-accessor read-write))
+)
+
+
+
 
 ;;; --------------------------------------------------
 ;;;                  modulo MAIN
@@ -1207,7 +1226,7 @@
 	(multislot pref_estilos (type INSTANCE) )
 )
 
-(deftemplate MAIN::cuadros_preferidos
+(deftemplate MAIN::cuadros_procesados
 	(multislot cuadros (type INSTANCE))
 )
 
@@ -1282,6 +1301,16 @@
 	(printout t "Estilo: " (send ?self:es_de_estilo get-nombre_estilo) crlf)
 	(printout t "Tematica: " (send ?self:es_de_tematica get-nombre_tematica) crlf)
 	(printout t crlf)
+)
+
+(defmessage-handler MAIN::Cuadro-puntuacion imprimir ()
+	(printout t "Titulo: " (send ?self:cuadro-instancia get-titulo) crlf)
+	(printout t "Puntuacion: " ?self:puntuacion crlf)
+	(printout t "Justificacion/es:" crlf)
+	(bind $?list_just ?self:justificacion)
+	(progn$ (?just ?list_just)
+		(printout t "- " ?just crlf)
+	)
 )
 
 ;;; --------------------------------------------------
@@ -1484,44 +1513,152 @@
 	(export ?ALL)
 );
 
-; funcion sencilla que recoge todos los cuadros de los artistas favoritos
+; para cada cuadro, crea una instancia del cuadro procesado (la puntuacion del cuadro -0 por defecto- 
+; y la justificacion de esa puntuacion)
+(defrule procesar-datos::inicio-cuadros-puntuados
+	(declare (salience 10))
+	=>
+	(bind $?lista (find-all-instances ((?cuadro Cuadro)) TRUE ))
+	(progn$ (?c ?lista)
+		;gensym da un nombre diferente a cada instancia creada de la clase Cuadro-puntuacion
+		(make-instance (gensym) of Cuadro-puntuacion (cuadro-instancia ?c)(puntuacion 0))
+	)
+)
+
+; funcion sencilla que indica los artistas favoritos del usuario
 (defrule procesar-datos::crea-hechos-artistas
 	(preferencias_grupo (pref_artistas $?art_prefs))
 	=>
-	(if (not(member (length$ $?art_prefs) $?art_prefs)) ; si el usuario NO ha introducido ninguno
-		then (progn$ (?a $?art_prefs)
+	(if (not(member (length$ $?art_prefs) $?art_prefs)) ; si el usuario NO ha introducido la opción ninguno
+		then (progn$ (?a ?art_prefs)
 			(assert (artista ?a)) ; crear hechos para 
 		)
 	)
 )
 
-(defrule procesar-datos::crea-hecho-lista-preferidos
-	(not(cuadros_preferidos))
+; funcion sencilla que indica los temas favoritos del usuario
+(defrule procesar-datos::crea-hechos-tematicas
+	(preferencias_grupo (pref_tematicas $?tem_prefs))
 	=>
-	(bind ?lista_vacia (create$ ))
-	(assert (cuadros_preferidos (cuadros ?lista_vacia)))
-)
-
-; anade mas relevancia a los cuadros del printor
-(defrule procesar-datos::add-preferidos-artista
-	?artista <- (artista ?art)
-	?inst_list <- (cuadros_preferidos (cuadros $?lista_prefs))
-	=>
-	(retract ?artista) ;eliminar hecho tratado
-	(bind ?lista_c_inst (find-all-instances ((?cuadro Cuadro)) TRUE ) ) ;obtenemos todas las instancias de cuadros
-	(progn$ (?c ?lista_c_inst)
-		(if (eq (send ?c get-pintado_por) (instance-name ?art)) ;si es del mismo artista 
-			then (if (not(member ?c $?lista_prefs)) ;y no esta ya en la lista, add
-					then (bind $?lista_prefs (insert$ $?lista_prefs (+ (length$ $?lista_prefs) 1) ?c))
-				)
+	(if (not(member (length$ $?tem_prefs) $?tem_prefs)) ; si el usuario NO ha introducido la opción ninguno
+		then (progn$ (?a ?tem_prefs)
+			(assert (tematica ?a)) ; crear hechos para 
 		)
 	)
-	(modify ?inst_list (cuadros $?lista_prefs))
 )
+
+; funcion sencilla que indica las epocas favoritos del usuario
+(defrule procesar-datos::crea-hechos-epocas
+	(preferencias_grupo (pref_epocas $?epoca_prefs))
+	=>
+	(if (not(member (length$ $?epoca_prefs) $?epoca_prefs)) ; si el usuario NO ha introducido la opción ninguno
+		then (progn$ (?a ?epoca_prefs)
+			(assert (epoca ?a)) ; crear hechos para 
+		)
+	)
+)
+
+; funcion sencilla que indica los estilos favoritos del usuario
+(defrule procesar-datos::crea-hechos-estilos
+	(preferencias_grupo (pref_estilos $?estilo_prefs))
+	=>
+	(if (not(member (length$ $?estilo_prefs) $?estilo_prefs)) ; si el usuario NO ha introducido la opción ninguno
+		then (progn$ (?a ?estilo_prefs)
+			(assert (estilo ?a)) ; crear hechos para 
+		)
+	)
+)
+
+; para cada artista preferido, aumentamos puntuación de cuadros que tengan ese artista
+(defrule procesar-datos::procesar-artista
+	?a <- (artista ?art_pref)
+	?c <-(object (is-a Cuadro) (pintado_por ?autor))
+	(test (eq (instance-name ?art_pref) ?autor))
+	?cp <- (object (is-a Cuadro-puntuacion) (cuadro-instancia ?c_inst) (puntuacion ?p) (justificacion $?just))
+	(test (eq (instance-name ?c) (instance-name ?c_inst)))
+	(not (procesado-cuadro-autor ?c ?art_pref)) ; nose si és necessari
+	=>
+	(bind ?nueva_p (+ ?p 1))
+	(send ?cp put-puntuacion ?nueva_p)
+	(bind ?nueva_just "Cuadro hecho por autor preferido")
+	(slot-insert$ ?cp justificacion (length$ $?just) ?nueva_just)
+	(assert (procesado-cuadro-autor ?c ?art_pref))
+)
+
+; para cada tema preferido, aumentamos puntuación de cuadros de esa tematica
+(defrule procesar-datos::procesar-tematica
+	?a <- (tematica ?tema_pref)
+	?c <-(object (is-a Cuadro) (es_de_tematica ?tema))
+	(test (eq (instance-name ?tema_pref) ?tema))
+	?cp <- (object (is-a Cuadro-puntuacion) (cuadro-instancia ?c_inst) (puntuacion ?p) (justificacion $?just))
+	(test (eq (instance-name ?c) (instance-name ?c_inst)))
+	(not (procesado-cuadro-tema ?c ?tema_pref)) ; nose si és necessari
+	=>
+	(bind ?nueva_p (+ ?p 1))
+	(send ?cp put-puntuacion ?nueva_p)
+	(bind ?nueva_just "Cuadro de tematica preferida")
+	(slot-insert$ ?cp justificacion (length$ $?just) ?nueva_just)
+	(assert (procesado-cuadro-tema ?c ?tema_pref))
+)
+
+; para cada epoca preferida, aumentamos puntuación de cuadros de esa epoca 
+(defrule procesar-datos::procesar-epoca
+	?a <- (epoca ?epoca_pref)
+	?c <-(object (is-a Cuadro) (es_de_epoca ?epoca))
+	(test (eq (instance-name ?epoca_pref) ?epoca))
+	?cp <- (object (is-a Cuadro-puntuacion) (cuadro-instancia ?c_inst) (puntuacion ?p) (justificacion $?just))
+	(test (eq (instance-name ?c) (instance-name ?c_inst)))
+	(not (procesado-cuadro-epoca ?c ?epoca_pref)) ; nose si és necessari
+	=>
+	(bind ?nueva_p (+ ?p 1))
+	(send ?cp put-puntuacion ?nueva_p)
+	(bind ?nueva_just "Cuadro de epoca preferida")
+	(slot-insert$ ?cp justificacion (length$ $?just) ?nueva_just)
+	(assert (procesado-cuadro-epoca ?c ?epoca_pref))
+)
+
+; para cada estilo preferido, aumentamos puntuación de cuadros que tengan ese estilo
+(defrule procesar-datos::procesar-estilo
+	?a <- (estilo ?estilo_pref)
+	?c <-(object (is-a Cuadro) (es_de_estilo ?estilo))
+	(test (eq (instance-name ?estilo_pref) ?estilo))
+	?cp <- (object (is-a Cuadro-puntuacion) (cuadro-instancia ?c_inst) (puntuacion ?p) (justificacion $?just))
+	(test (eq (instance-name ?c) (instance-name ?c_inst)))
+	(not (procesado-cuadro-estilo ?c ?estilo_pref)) ; nose si és necessari
+	=>
+	(bind ?nueva_p (+ ?p 1))
+	(send ?cp put-puntuacion ?nueva_p)
+	(bind ?nueva_just "Cuadro de estilo preferido")
+	(slot-insert$ ?cp justificacion (length$ $?just) ?nueva_just)
+	(assert (procesado-cuadro-estilo ?c ?estilo_pref))
+)
+
+; INIT DEPRECATED ------------------------------------------------------------------------------------------------------
+; anade mas relevancia a los cuadros del printor
+;(defrule procesar-datos::add-preferidos-artista
+;	?artista <- (artista ?art)
+;	?inst_list <- (cuadros_preferidos (cuadros $?lista_prefs))
+;	=>
+;	(retract ?artista) ;eliminar hecho tratado
+;	(bind ?lista_c_inst (find-all-instances ((?cuadro Cuadro)) TRUE ) ) ;obtenemos todas las instancias de cuadros
+;	(progn$ (?c ?lista_c_inst)
+;		(if (eq (send ?c get-pintado_por) (instance-name ?art)) ;si es del mismo artista 
+;			then (if (not(member ?c $?lista_prefs)) ;y no esta ya en la lista, add
+;					then (bind $?lista_prefs (insert$ $?lista_prefs (+ (length$ $?lista_prefs) 1) ?c))
+;				)
+;		)
+;	)
+;	(modify ?inst_list (cuadros $?lista_prefs))
+;)
+; END DEPRECATED -------------------------------------------------------------------------------------------------------
 
 (defrule procesar-datos::pasar-a-generar-sol
 	(declare (salience -1)) ; prioridad para que sea lo ultimo que ejecuta
 	=>
+	; Guarda una lista de todas las puntuaciones de los cuadors
+	(bind $?lista_cp (find-all-instances ((?cp Cuadro-puntuacion)) TRUE ))
+	(assert (cuadros_procesados (cuadros $?lista_cp)))
+	; A partir de esa lista se generara la solucion
 	(printout t "Generando visita personalizada..." crlf)
 	(assert (tarea crear-sol))
 	(focus generar-sol)
@@ -1537,34 +1674,48 @@
 	(export ?ALL)
 );
 
-; dividir los cuadros en los dias que hay
-(defrule generar-sol::repartir-cuadros-dias
-	(grupo (num_dias ?nd) (horas_dia ?hd))
-	(cuadros_preferidos (cuadros $?lista_pref))
-	(tarea crear-sol)
+; ver punutacion de todos los cuadors y el porque
+(defrule generar-sol::imprimir-cuadros-procesados
+	(cuadros_procesados (cuadros $?lista_cp))
 	=>
-	(bind ?cuadros_por_dia (/ (length$ $?lista_pref) ?nd))
-	(bind ?cuadros_sobran (mod (length$ $?lista_pref) ?nd))
-	(printout t crlf)
-	(bind ?ind_cuadro 1)
-	(loop-for-count (?i 1 ?nd) do
-		(if (and (eq ?i 1) (> ?cuadros_sobran 0)) ;si sobran cuadros, los ponemos en el primer dia (TODO: repartirlos mejor)
-			then 
-				(printout t "Dia 1: " crlf)
-				(loop-for-count (?j 1 (+ ?cuadros_por_dia ?cuadros_sobran))
-					(bind ?c (nth$ ?ind_cuadro $?lista_pref))
-					(printout t (send ?c imprimir))
-					(bind ?ind_cuadro (+ ?ind_cuadro 1))
-				)
-			else 
-				(printout t "Dia " ?i ": " crlf)
-				(loop-for-count (?j 1 ?cuadros_por_dia)
-					(bind ?c (nth$ ?ind_cuadro $?lista_pref))
-					(printout t (send ?c imprimir))
-					(bind ?ind_cuadro (+ ?ind_cuadro 1))
-				)
-		)
-		(printout t "----------------------" crlf)
-		(printout t crlf)
+	(bind ?num_cuadros (length$ $?lista_cp))
+	(loop-for-count (?j 1 ?num_cuadros)
+		(bind ?c (nth$ ?j $?lista_cp))
+		(printout t (send ?c imprimir))
 	)
 )
+
+
+
+
+; dividir los cuadros en los dias que hay
+;(defrule generar-sol::repartir-cuadros-dias
+;	(grupo (num_dias ?nd) (horas_dia ?hd))
+;	(cuadros_preferidos (cuadros $?lista_pref))
+;	(tarea crear-sol)
+;	=>
+;	(bind ?cuadros_por_dia (/ (length$ $?lista_pref) ?nd))
+;	(bind ?cuadros_sobran (mod (length$ $?lista_pref) ?nd))
+;	(printout t crlf)
+;	(bind ?ind_cuadro 1)
+;	(loop-for-count (?i 1 ?nd) do
+;		(if (and (eq ?i 1) (> ?cuadros_sobran 0)) ;si sobran cuadros, los ponemos en el primer dia (TODO: repartirlos mejor)
+;			then 
+;				(printout t "Dia 1: " crlf)
+;				(loop-for-count (?j 1 (+ ?cuadros_por_dia ?cuadros_sobran))
+;					(bind ?c (nth$ ?ind_cuadro $?lista_pref))
+;					(printout t (send ?c imprimir))
+;					(bind ?ind_cuadro (+ ?ind_cuadro 1))
+;				)
+;			else 
+;				(printout t "Dia " ?i ": " crlf)
+;				(loop-for-count (?j 1 ?cuadros_por_dia)
+;					(bind ?c (nth$ ?ind_cuadro $?lista_pref))
+;					(printout t (send ?c imprimir))
+;					(bind ?ind_cuadro (+ ?ind_cuadro 1))
+;				)
+;		)
+;		(printout t "----------------------" crlf)
+;		(printout t crlf)
+;	)
+;)
