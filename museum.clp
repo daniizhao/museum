@@ -1635,7 +1635,7 @@
 	(test (eq (instance-name ?estilo_pref) ?estilo))
 	?cp <- (object (is-a Cuadro-puntuacion) (cuadro-instancia ?c_inst) (puntuacion ?p))
 	(test (eq (instance-name ?c) (instance-name ?c_inst)))
-	(not (procesado-cuadro-estilo ?c ?estilo_pref)) ; nose si és necessari
+	(not (procesado-cuadro-estilo ?c ?estilo_pref))
 	=>
 	(bind ?nueva_p (+ ?p 1))
 	(send ?cp put-puntuacion ?nueva_p)
