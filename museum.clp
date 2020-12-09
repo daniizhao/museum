@@ -1449,7 +1449,6 @@
 )
 
 (defmessage-handler MAIN::Cuadro-puntuacion imprimir-version-corta ()
-	(printout t "Puntuacion: " ?self:puntuacion crlf)
 	(bind $?list_just ?self:justificacion)
 	(if (> (length$ $?list_just) 0) then
 		(printout t "Justificacion/es:" crlf)
@@ -1457,7 +1456,7 @@
 			(printout t "- " ?just crlf)
 		)
 	)
-	(printout t "---" crlf)
+	(printout t crlf)
 )
 
 (defmessage-handler MAIN::Dia imprimir ()
@@ -1692,11 +1691,11 @@
 	(bind $?lista (find-all-instances ((?cuadro Cuadro)) TRUE ))
 	(progn$ (?c ?lista)
 		;gensym da un nombre diferente a cada instancia creada de la clase Cuadro-puntuacion
-		(bind ?rel "Baja")
-		(if (eq (send ?c get-relevancia) 1) then (bind ?rel "Media"))
-		(if (eq (send ?c get-relevancia) 2) then (bind ?rel "Alta"))
-		(bind ?nueva_just (str-cat "Cuadro de relevancia tipo: " ?rel))
-		(make-instance (gensym) of Cuadro-puntuacion (cuadro-instancia ?c)(puntuacion (send ?c get-relevancia)) (justificacion ?nueva_just))
+		(bind $?rel "Baja")
+		(if (eq (send ?c get-relevancia) 1) then (bind $?rel "Media"))
+		(if (eq (send ?c get-relevancia) 2) then (bind $?rel "Alta"))
+		(bind $?nueva_just (str-cat "Cuadro de relevancia tipo: " $?rel))
+		(make-instance (gensym) of Cuadro-puntuacion (cuadro-instancia ?c)(puntuacion (send ?c get-relevancia)) (justificacion $?nueva_just))
 	)
 )
 
@@ -1909,6 +1908,8 @@
 	(sol_creada)
 	(visita (dias $?lista_dias))
 	=>
+	(printout t "----------------------------------------" crlf)
+	(printout t crlf)
 	(progn$ (?dia $?lista_dias)
 		(printout t (send ?dia imprimir))
 	)
