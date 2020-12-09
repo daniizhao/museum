@@ -1199,7 +1199,7 @@
 	(slot num-dia 
 		(type INTEGER)
 		(create-accessor read-write))
-	(multislot cuadros
+	(multislot cuadros-puntuados
 		(type INSTANCE)
 		(create-accessor read-write))
 	(slot tiempo 
@@ -1322,23 +1322,60 @@
 	?cp_max
 )
 
-; ordena la lista de cuadros por salas
-(deffunction MAIN::ordenar-cuadros-por-salas ($?lista_cuadros)
+; ordena la lista de cuadros puntuados por salas
+(deffunction MAIN::ordenar-cp-por-salas ($?lista_cp)
 	(bind ?sala 1)
-	(bind $?lista_cuadros_ord (create$ ))
-	(while (not (eq (length$ $?lista_cuadros) (length$ $?lista_cuadros_ord))) do
-		(progn$ (?c $?lista_cuadros)
+	(bind $?lista_cp_ord (create$ ))
+	(while (not (eq (length$ $?lista_cp) (length$ $?lista_cp_ord))) do
+		(progn$ (?cp $?lista_cp)
+			(bind ?c (send ?cp get-cuadro-instancia))
 			(bind ?s (send ?c get-expuesta_en_sala))
 			(bind ?num_sala (send ?s get-numero))
 			(if (eq ?sala ?num_sala) then
-				(bind $?lista_cuadros_ord (insert$ ?lista_cuadros_ord (+ (length$ ?lista_cuadros_ord) 1) ?c))
+				(bind $?lista_cp_ord (insert$ ?lista_cp_ord (+ (length$ ?lista_cp_ord) 1) ?cp))
 			)
 		)
 		(bind ?sala (+ ?sala 1))
 	)
-	$?lista_cuadros_ord
+	$?lista_cp_ord
 )
 
+
+(deffunction MAIN::determina-tiempo-por-cuadro (?c ?tip ?gc)
+	(bind ?cmp (send ?c get-complejidad))
+	(bind ?coneix 1)
+	(if (not (eq ?gc 1))
+		then (bind ?coneix (+ ?coneix (/ ?gc 10)))
+	)
+	(switch ?tip
+		(case "Individual" then
+						(if (>= 0.01 ?cmp) then (bind ?temps 5)
+						else (if (>= 0.1 ?cmp) then (bind ?temps 7)
+						else (if (>= 0.5 ?cmp) then (bind ?temps 10)
+						else (if (>= 1 ?cmp) then (bind ?temps 20)))))
+					)
+		(case "Familia" then 
+						(if (>= 0.01 ?cmp) then (bind ?temps 7)
+						else (if (>= 0.1 ?cmp) then (bind ?temps 9)
+						else (if (>= 0.5 ?cmp) then (bind ?temps 15)
+						else (if (>= 1 ?cmp) then (bind ?temps 25)))))
+					)
+		(case "Grupo Pequeno" then 
+						(if (>= 0.01 ?cmp) then (bind ?temps 12)
+						else (if (>= 0.1 ?cmp) then (bind ?temps 15)
+						else (if (>= 0.5 ?cmp) then (bind ?temps 20)
+						else (if (>= 1 ?cmp) then (bind ?temps 30)))))
+					)
+		(case "Grupo Grande" then
+						(if (>= 0.01 ?cmp) then (bind ?temps 20)
+						else (if (>= 0.1 ?cmp) then (bind ?temps 25)
+						else (if (>= 0.5 ?cmp) then (bind ?temps 30)
+						else (if (>= 1 ?cmp) then (bind ?temps 40)))))
+					)
+		(default (printout t "error" crlf))
+	)
+	(* ?temps ?coneix)
+)
 
 
 
@@ -1359,9 +1396,9 @@
 
 (defmessage-handler MAIN::Cuadro imprimir-version-corta ()
 	(printout t "Titulo: " ?self:titulo crlf)
+	(printout t "Artista: " (send ?self:pintado_por get-nombre_artista) crlf)
 	(printout t "Ano: " ?self:ano crlf)
 	(printout t "Sala: " (send ?self:expuesta_en_sala get-numero) crlf)
-	(printout t crlf)
 )
 
 (defmessage-handler MAIN::Cuadro-puntuacion imprimir ()
@@ -1377,12 +1414,28 @@
 	(printout t crlf)
 )
 
+(defmessage-handler MAIN::Cuadro-puntuacion imprimir-version-corta ()
+	(printout t "Puntuacion: " ?self:puntuacion crlf)
+	(bind $?list_just ?self:justificacion)
+	(if (> (length$ $?list_just) 0) then
+		(printout t "Justificacion/es:" crlf)
+		(progn$ (?just ?list_just)
+			(printout t "- " ?just crlf)
+		)
+	)
+	(printout t "---" crlf)
+)
+
 (defmessage-handler MAIN::Dia imprimir ()
+	(printout t crlf)
 	(printout t "Dia: " ?self:num-dia crlf)
-	(bind $?lista_cuadros ?self:cuadros)
-	(if (> (length$ $?lista_cuadros) 0) then
-		(progn$ (?c ?lista_cuadros)
+	(printout t crlf)
+	(bind $?lista_cp ?self:cuadros-puntuados)
+	(if (> (length$ $?lista_cp) 0) then
+		(progn$ (?cp ?lista_cp)
+			(bind ?c (send ?cp get-cuadro-instancia))
 			(printout t (send ?c imprimir-version-corta))
+			(printout t (send ?cp imprimir-version-corta))
 		)
 	)
 	(printout t "----------------------------------------" crlf)
@@ -1664,8 +1717,9 @@
 	=>
 	(bind ?nueva_p (+ ?p 1))
 	(send ?cp put-puntuacion ?nueva_p)
-	(bind ?nueva_just "Cuadro hecho por autor preferido")
-	(slot-insert$ ?cp justificacion 1 ?nueva_just)
+	(bind ?nueva_just (str-cat "Cuadro de artista preferido: " (send ?art_pref get-nombre_artista)))
+	(bind ?insert_pos (+ (length$(send ?cp get-justificacion)) 1))
+	(slot-insert$ ?cp justificacion ?insert_pos ?nueva_just)
 	(assert (procesado-cuadro-autor ?c ?art_pref))
 )
 
@@ -1680,8 +1734,9 @@
 	=>
 	(bind ?nueva_p (+ ?p 1))
 	(send ?cp put-puntuacion ?nueva_p)
-	(bind ?nueva_just "Cuadro de tematica preferida")
-	(slot-insert$ ?cp justificacion 1 ?nueva_just)
+	(bind ?nueva_just (str-cat "Cuadro de tematica preferida: " (send ?tema_pref get-nombre_tematica)))
+	(bind ?insert_pos (+ (length$(send ?cp get-justificacion)) 1))
+	(slot-insert$ ?cp justificacion ?insert_pos ?nueva_just)
 	(assert (procesado-cuadro-tema ?c ?tema_pref))
 )
 
@@ -1696,8 +1751,9 @@
 	=>
 	(bind ?nueva_p (+ ?p 1))
 	(send ?cp put-puntuacion ?nueva_p)
-	(bind ?nueva_just "Cuadro de epoca preferida")
-	(slot-insert$ ?cp justificacion 1 ?nueva_just)
+	(bind ?nueva_just (str-cat "Cuadro de epoca preferida: " (send ?epoca_pref get-nombre_epoca)))
+	(bind ?insert_pos (+ (length$(send ?cp get-justificacion)) 1))
+	(slot-insert$ ?cp justificacion ?insert_pos ?nueva_just)
 	(assert (procesado-cuadro-epoca ?c ?epoca_pref))
 )
 
@@ -1713,7 +1769,9 @@
 	(bind ?nueva_p (+ ?p 1))
 	(send ?cp put-puntuacion ?nueva_p)
 	(bind ?nueva_just "Cuadro de estilo preferido")
-	(slot-insert$ ?cp justificacion 1 ?nueva_just)
+	(bind ?nueva_just (str-cat "Cuadro de estilo preferido: " (send ?estilo_pref get-nombre_estilo)))
+	(bind ?insert_pos (+ (length$(send ?cp get-justificacion)) 1))
+	(slot-insert$ ?cp justificacion ?insert_pos ?nueva_just)
 	(assert (procesado-cuadro-estilo ?c ?estilo_pref))
 )
 
@@ -1765,7 +1823,7 @@
 )
 
 (defrule generar-sol::asignar-cuadros-a-dias
-	(grupo (grado_conocimiento ?gc))
+	(grupo (tipo ?tip) (grado_conocimiento ?gc))
 	(visita (dias $?lista_dias))
 	(cuadros_procesados_ord (cuadros $?lista_cp))
 	(not (cuadros_asignados_a_dias))
@@ -1780,17 +1838,17 @@
 		(bind ?tiempo_disponible_dia (send ?dia get-tiempo))
 		(bind $?cuadros_visitados_dia (create$ ))
 		(while (and (<= ?i ?num_cuadros) (> ?tiempo_disponible_dia 0)) do
-			; cojemos un cuadro
+			; cojemos un cuadro puntuado i el cuadro
 			(bind ?cp (nth$ ?i $?lista_cp))
 			(bind ?c (send ?cp get-cuadro-instancia))
-			(bind ?tiempo_c 30) ; AQUI SE HA DE PONER FUNCION TIEMPO VISITA DEL CUADRO)
+			(bind ?tiempo_c (determina-tiempo-por-cuadro ?c ?tip ?gc))
 			(if (>= (- ?tiempo_disponible_dia ?tiempo_c) 0) then
-				(bind $?cuadros_visitados_dia (insert$ $?cuadros_visitados_dia (+ (length$ $?cuadros_visitados_dia) 1) ?c))
+				(bind $?cuadros_visitados_dia (insert$ $?cuadros_visitados_dia (+ (length$ $?cuadros_visitados_dia) 1) ?cp))
 				(bind ?i (+ ?i 1))
 			)
 			(bind ?tiempo_disponible_dia (- ?tiempo_disponible_dia ?tiempo_c))
 		)
-		(send ?dia put-cuadros $?cuadros_visitados_dia)
+		(send ?dia put-cuadros-puntuados $?cuadros_visitados_dia)
 		(bind ?j (+ ?j 1))
 	)
 	(assert (cuadros_asignados_a_dias))
@@ -1802,9 +1860,9 @@
 	(not (sol_creada))
 	=>
 	(progn$ (?dia $?lista_dias)
-		(bind $?cuadros_visitados_dia (send ?dia get-cuadros))
-		(bind $?cuadros_visitados_dia_ord (ordenar-cuadros-por-salas $?cuadros_visitados_dia))
-		(send ?dia put-cuadros $?cuadros_visitados_dia_ord)
+		(bind $?cp_visitados_dia (send ?dia get-cuadros-puntuados))
+		(bind $?cp_visitados_dia_ord (ordenar-cp-por-salas $?cp_visitados_dia))
+		(send ?dia put-cuadros-puntuados $?cp_visitados_dia_ord)
 	)
 	(assert (sol_creada))
 )
@@ -1815,17 +1873,5 @@
 	=>
 	(progn$ (?dia $?lista_dias)
 		(printout t (send ?dia imprimir))
-	)
-)
-
-; ver punutacion de todos los cuadors y el porque
-(defrule generar-sol::imprimir-cuadros-procesados
-	(declare (salience -10))
-	(cuadros_procesados_ord (cuadros $?lista_cp))
-	=>
-	(bind ?num_cuadros (length$ $?lista_cp))
-	(loop-for-count (?j 1 ?num_cuadros)
-		(bind ?c (nth$ ?j $?lista_cp))
-		(printout t (send ?c imprimir))
 	)
 )
