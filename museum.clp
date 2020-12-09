@@ -377,7 +377,7 @@
 ;;;                  	instances
 ;;; --------------------------------------------------
 
-; Tue Nov 24 19:32:32 CET 2020
+; Wed Dec 09 20:52:53 CET 2020
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -393,6 +393,7 @@
 		(es_de_tematica [museum_Instance_1])
 		(expuesta_en_sala [museum_Instance_10000])
 		(pintado_por [museum_Instance_3])
+		(relevancia 2)
 		(titulo "Triptico del Jardin de las Delicias"))
 
 	([museum_Instance_1] of  Tematica
@@ -470,6 +471,7 @@
 		(es_de_tematica [museum_Instance_12])
 		(expuesta_en_sala [museum_Instance_10003])
 		(pintado_por [museum_Instance_13])
+		(relevancia 1)
 		(titulo "Amanecer"))
 
 	([museum_Instance_12] of  Tematica
@@ -514,6 +516,7 @@
 		(es_de_tematica [museum_Instance_16])
 		(expuesta_en_sala [museum_Instance_10003])
 		(pintado_por [museum_Instance_13])
+		(relevancia 1)
 		(titulo "Mujer con sombrilla"))
 
 	([museum_Instance_16] of  Tematica
@@ -539,6 +542,7 @@
 		(es_de_tematica [museum_Instance_16])
 		(expuesta_en_sala [museum_Instance_10000])
 		(pintado_por [museum_Instance_18])
+		(relevancia 2)
 		(titulo "La Gioconda"))
 
 	([museum_Instance_18] of  Artista
@@ -583,6 +587,7 @@
 		(es_de_tematica [museum_Instance_21])
 		(expuesta_en_sala [museum_Instance_10000])
 		(pintado_por [museum_Instance_18])
+		(relevancia 2)
 		(titulo "La ultima cena"))
 
 	([museum_Instance_21] of  Tematica
@@ -603,6 +608,7 @@
 		(es_de_tematica [museum_Instance_12])
 		(expuesta_en_sala [museum_Instance_10003])
 		(pintado_por [museum_Instance_23])
+		(relevancia 2)
 		(titulo "La noche estrellada"))
 
 	([museum_Instance_23] of  Artista
@@ -624,6 +630,7 @@
 		(es_de_tematica [museum_Instance_21])
 		(expuesta_en_sala [museum_Instance_10003])
 		(pintado_por [museum_Instance_23])
+		(relevancia 1)
 		(titulo "El dormitorio de Van Gogh en Arle"))
 
 	([museum_Instance_25] of  Cuadro
@@ -636,6 +643,7 @@
 		(es_de_tematica [museum_Instance_26])
 		(expuesta_en_sala [museum_Instance_10002])
 		(pintado_por [museum_Instance_28])
+		(relevancia 2)
 		(titulo "Saturno devorando a su hijo"))
 
 	([museum_Instance_26] of  Tematica
@@ -690,6 +698,7 @@
 		(es_de_tematica [museum_Instance_31])
 		(expuesta_en_sala [museum_Instance_10002])
 		(pintado_por [museum_Instance_28])
+		(relevancia 2)
 		(titulo "La maja desnuda"))
 
 	([museum_Instance_31] of  Tematica
@@ -707,6 +716,7 @@
 		(es_de_tematica [museum_Instance_12])
 		(expuesta_en_sala [museum_Instance_10002])
 		(pintado_por [museum_Instance_33])
+		(relevancia 0)
 		(titulo "The Bathing Pool"))
 
 	([museum_Instance_33] of  Artista
@@ -735,6 +745,7 @@
 		(es_de_tematica [museum_Instance_21])
 		(expuesta_en_sala [museum_Instance_10002])
 		(pintado_por [museum_Instance_33])
+		(relevancia 0)
 		(titulo "The Grande Galerie"))
 
 	([museum_Instance_37] of  Estilo
@@ -751,6 +762,7 @@
 		(es_de_tematica [museum_Instance_16])
 		(expuesta_en_sala [museum_Instance_10002])
 		(pintado_por [museum_Instance_40])
+		(relevancia 2)
 		(titulo "La joven de la perla"))
 
 	([museum_Instance_39] of  Epoca
@@ -793,6 +805,7 @@
 		(es_de_tematica [museum_Instance_16])
 		(expuesta_en_sala [museum_Instance_10002])
 		(pintado_por [museum_Instance_40])
+		(relevancia 1)
 		(titulo "La lechera"))
 
 	([museum_Instance_43] of  Cuadro
@@ -805,6 +818,7 @@
 		(es_de_tematica [museum_Instance_44])
 		(expuesta_en_sala [museum_Instance_10004])
 		(pintado_por [museum_Instance_45])
+		(relevancia 2)
 		(titulo "Guernica"))
 
 	([museum_Instance_44] of  Tematica
@@ -838,6 +852,7 @@
 		(es_de_tematica [museum_Instance_16])
 		(expuesta_en_sala [museum_Instance_10004])
 		(pintado_por [museum_Instance_45])
+		(relevancia 0)
 		(titulo "La mujer que llora"))
 
 	([museum_Instance_48] of  Cuadro
@@ -850,6 +865,7 @@
 		(es_de_tematica [museum_Instance_12])
 		(expuesta_en_sala [museum_Instance_10004])
 		(pintado_por [museum_Instance_49])
+		(relevancia 1)
 		(titulo "La persistencia de la memoria"))
 
 	([museum_Instance_49] of  Artista
@@ -886,6 +902,7 @@
 		(es_de_tematica [museum_Instance_26])
 		(expuesta_en_sala [museum_Instance_10000])
 		(pintado_por [museum_Instance_52])
+		(relevancia 2)
 		(titulo "El nacimiento de Venus"))
 
 	([museum_Instance_52] of  Artista
@@ -914,6 +931,7 @@
 		(es_de_tematica [museum_Instance_12])
 		(expuesta_en_sala [museum_Instance_10004])
 		(pintado_por [museum_Instance_49])
+		(relevancia 0)
 		(titulo "Los Elefantes"))
 
 	([museum_Instance_55] of  Cuadro
@@ -926,6 +944,7 @@
 		(es_de_tematica [museum_Instance_16])
 		(expuesta_en_sala [museum_Instance_10002])
 		(pintado_por [museum_Instance_56])
+		(relevancia 1)
 		(titulo "La ronda de noche"))
 
 	([museum_Instance_56] of  Artista
@@ -947,6 +966,7 @@
 		(es_de_tematica [museum_Instance_16])
 		(expuesta_en_sala [museum_Instance_10002])
 		(pintado_por [museum_Instance_56])
+		(relevancia 0)
 		(titulo "El pintor en su estudio"))
 
 	([museum_Instance_58] of  Cuadro
@@ -959,6 +979,7 @@
 		(es_de_tematica [museum_Instance_12])
 		(expuesta_en_sala [museum_Instance_10003])
 		(pintado_por [museum_Instance_59])
+		(relevancia 0)
 		(titulo "Chateau Noir"))
 
 	([museum_Instance_59] of  Artista
@@ -980,6 +1001,7 @@
 		(es_de_tematica [museum_Instance_7])
 		(expuesta_en_sala [museum_Instance_10003])
 		(pintado_por [museum_Instance_9])
+		(relevancia 2)
 		(titulo "El Beso"))
 
 	([museum_Instance_60] of  Cuadro
@@ -992,6 +1014,7 @@
 		(es_de_tematica [museum_Instance_16])
 		(expuesta_en_sala [museum_Instance_10003])
 		(pintado_por [museum_Instance_59])
+		(relevancia 0)
 		(titulo "Autoretrato"))
 
 	([museum_Instance_61] of  Cuadro
@@ -1004,6 +1027,7 @@
 		(es_de_tematica [museum_Instance_1])
 		(expuesta_en_sala [museum_Instance_10000])
 		(pintado_por [museum_Instance_52])
+		(relevancia 1)
 		(titulo "Alegoria de la primavera"))
 
 	([museum_Instance_62] of  Cuadro
@@ -1016,6 +1040,7 @@
 		(es_de_tematica [museum_Instance_63])
 		(expuesta_en_sala [museum_Instance_10004])
 		(pintado_por [museum_Instance_64])
+		(relevancia 0)
 		(titulo "Vaca Amarilla"))
 
 	([museum_Instance_63] of  Tematica
@@ -1052,6 +1077,7 @@
 		(es_de_tematica [museum_Instance_67])
 		(expuesta_en_sala [museum_Instance_10004])
 		(pintado_por [museum_Instance_68])
+		(relevancia 0)
 		(titulo "Composicion VII"))
 
 	([museum_Instance_67] of  Tematica
@@ -1078,6 +1104,7 @@
 		(es_de_tematica [museum_Instance_63])
 		(expuesta_en_sala [museum_Instance_10004])
 		(pintado_por [museum_Instance_64])
+		(relevancia 0)
 		(titulo "La torre de los caballos azules"))
 
 	([museum_Instance_7] of  Tematica
@@ -1095,6 +1122,7 @@
 		(es_de_tematica [museum_Instance_12])
 		(expuesta_en_sala [museum_Instance_10000])
 		(pintado_por [museum_Instance_71])
+		(relevancia 0)
 		(titulo "Los cazadores en la nieve"))
 
 	([museum_Instance_71] of  Artista
@@ -1114,6 +1142,7 @@
 		(es_de_tematica [museum_Instance_67])
 		(expuesta_en_sala [museum_Instance_10004])
 		(pintado_por [museum_Instance_73])
+		(relevancia 1)
 		(titulo "El cazador"))
 
 	([museum_Instance_73] of  Artista
@@ -1133,6 +1162,7 @@
 		(es_de_tematica [museum_Instance_1])
 		(expuesta_en_sala [museum_Instance_10003])
 		(pintado_por [museum_Instance_9])
+		(relevancia 0)
 		(titulo "Tod und Leben"))
 
 	([museum_Instance_8] of  Epoca
