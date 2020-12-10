@@ -1428,11 +1428,11 @@
 	(printout t crlf)
 )
 
-(defmessage-handler MAIN::Cuadro imprimir-version-corta ()
+(defmessage-handler MAIN::Cuadro imprimir-version-corta (?t)
 	(printout t "Titulo: " ?self:titulo crlf)
 	(printout t "Artista: " (send ?self:pintado_por get-nombre_artista) crlf)
-	(printout t "Ano: " ?self:ano crlf)
 	(printout t "Sala: " (send ?self:expuesta_en_sala get-numero) crlf)
+	(printout t "Tiempo recomendado: " ?t " minutos" crlf)
 )
 
 (defmessage-handler MAIN::Cuadro-puntuacion imprimir ()
@@ -1459,7 +1459,7 @@
 	(printout t crlf)
 )
 
-(defmessage-handler MAIN::Dia imprimir ()
+(defmessage-handler MAIN::Dia imprimir (?tip ?gc)
 	(printout t crlf)
 	(printout t "Dia: " ?self:num-dia crlf)
 	(printout t crlf)
@@ -1467,7 +1467,8 @@
 	(if (> (length$ $?lista_cp) 0) then
 		(progn$ (?cp ?lista_cp)
 			(bind ?c (send ?cp get-cuadro-instancia))
-			(printout t (send ?c imprimir-version-corta))
+			(bind ?t (determina-tiempo-por-cuadro ?c ?tip ?gc))
+			(printout t (send ?c imprimir-version-corta ?t))
 			(printout t (send ?cp imprimir-version-corta))
 		)
 	)
@@ -1907,10 +1908,11 @@
 (defrule generar-sol::imprimir-sol
 	(sol_creada)
 	(visita (dias $?lista_dias))
+	(grupo (tipo ?tip) (grado_conocimiento ?gc))
 	=>
 	(printout t "----------------------------------------" crlf)
 	(printout t crlf)
 	(progn$ (?dia $?lista_dias)
-		(printout t (send ?dia imprimir))
+		(printout t (send ?dia imprimir ?tip ?gc))
 	)
 )
