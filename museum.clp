@@ -1510,7 +1510,6 @@
 	(test (< ?num_dias 0))
 	=>
 	(bind ?resp (pregunta-numerica "¿Cuantos dias visitareis el museo?" 1 7))
-	; modificar el numero de dias del hecho
 	(printout t crlf)
 	(modify ?grupo (num_dias ?resp))
 )
@@ -1521,22 +1520,21 @@
 	(test (< ?horas 0))
 	=>
 	(bind ?resp (pregunta-numerica "¿Cuantas horas al dia visitareis el mueso?" 1 8))
-	; modificar el numero de dias del hecho
 	(printout t crlf)
 	(modify ?grupo (horas_dia ?resp))
 )
 
-; preguntar grado de conocimiento, en un grango de 0 a 5
+; preguntar grado de conocimiento, en un rango de 1 a 5
 (defrule recoger-datos::pregunta-conocimiento
 	?grupo <- (grupo (grado_conocimiento ?gc))
 	(test (< ?gc 0))
 	=>
-	(bind ?resp (pregunta-numerica "¿Cual es tu grado de conocimiento?" 0 5))
-	; modificar el numero de dias del hecho
+	(bind ?resp (pregunta-numerica "¿Cual es tu grado de conocimiento?" 1 5))
 	(printout t crlf)
 	(modify ?grupo (grado_conocimiento ?resp))
 )
 
+; pasar al modulo de recoger preferencias
 (defrule recoger-datos::pregunta-preferencias
 	?g <- (grupo (tipo ?t) (num_dias ?nd) (horas_dia ?hd) )
 	(test (not(= (str-compare ?t "tipo") 0)))
@@ -1555,6 +1553,7 @@
 	(export ?ALL)
 )
 
+; preguntar artistas favoritos
 (defrule recoger-preferencias::preguntar-artistas
 	(not (preferencias_grupo))
 	=>
@@ -1582,6 +1581,7 @@
 	(assert (preferencias_grupo (pref_artistas ?respuestas)))
 )
 
+; preguntar tematicas favoritas
 (defrule recoger-preferencias::preguntar-tematicas
 	?estado <- (recoger temas)
 	?prefs_grupo <- (preferencias_grupo)
@@ -1611,6 +1611,7 @@
 	(modify ?prefs_grupo (pref_tematicas ?respuestas))
 )
 
+; preguntar epocas favoritas
 (defrule recoger-preferencias::preguntar-epocas
 	?estado <- (recoger epocas)
 	?prefs_grupo <- (preferencias_grupo)
@@ -1640,6 +1641,7 @@
 	(modify ?prefs_grupo (pref_epocas ?respuestas))
 )
 
+; preguntar estilos favoritos
 (defrule recoger-preferencias::preguntar-estilos
 	?estado <- (recoger estilos)
 	?prefs_grupo <- (preferencias_grupo)
@@ -1668,6 +1670,7 @@
 	(modify ?prefs_grupo (pref_estilos ?respuestas))
 )
 
+; pasar al modulo de procesar datos
 (defrule recoger-preferencias::pasar-a-procesar
 	(declare (salience -1)) ; prioridad para que sea lo ultimo que ejecuta
 	=>
@@ -1700,7 +1703,7 @@
 	)
 )
 
-; funcion sencilla que indica los artistas favoritos del usuario
+; funcion sencilla que crea un hecho por cada artista favorito que ha indicado
 (defrule procesar-datos::crea-hechos-artistas
 	(preferencias_grupo (pref_artistas $?art_prefs))
 	=>
@@ -1711,7 +1714,7 @@
 	)
 )
 
-; funcion sencilla que indica los temas favoritos del usuario
+; funcion sencilla que crea un hecho por cada tematica favorita que ha indicado
 (defrule procesar-datos::crea-hechos-tematicas
 	(preferencias_grupo (pref_tematicas $?tem_prefs))
 	=>
@@ -1722,7 +1725,7 @@
 	)
 )
 
-; funcion sencilla que indica las epocas favoritos del usuario
+; funcion sencilla que crea un hecho por cada epoca favorita que ha indicado
 (defrule procesar-datos::crea-hechos-epocas
 	(preferencias_grupo (pref_epocas $?epoca_prefs))
 	=>
@@ -1733,7 +1736,7 @@
 	)
 )
 
-; funcion sencilla que indica los estilos favoritos del usuario
+; funcion sencilla que crea un hecho por cada estilo favorito que ha indicado
 (defrule procesar-datos::crea-hechos-estilos
 	(preferencias_grupo (pref_estilos $?estilo_prefs))
 	=>
@@ -1751,7 +1754,7 @@
 	(test (eq (instance-name ?art_pref) ?autor))
 	?cp <- (object (is-a Cuadro-puntuacion) (cuadro-instancia ?c_inst) (puntuacion ?p))
 	(test (eq (instance-name ?c) (instance-name ?c_inst)))
-	(not (procesado-cuadro-autor ?c ?art_pref)) ; nose si és necessari
+	(not (procesado-cuadro-autor ?c ?art_pref))
 	=>
 	(bind ?nueva_p (+ ?p 1))
 	(send ?cp put-puntuacion ?nueva_p)
@@ -1768,7 +1771,7 @@
 	(test (eq (instance-name ?tema_pref) ?tema))
 	?cp <- (object (is-a Cuadro-puntuacion) (cuadro-instancia ?c_inst) (puntuacion ?p))
 	(test (eq (instance-name ?c) (instance-name ?c_inst)))
-	(not (procesado-cuadro-tema ?c ?tema_pref)) ; nose si és necessari
+	(not (procesado-cuadro-tema ?c ?tema_pref))
 	=>
 	(bind ?nueva_p (+ ?p 1))
 	(send ?cp put-puntuacion ?nueva_p)
@@ -1785,7 +1788,7 @@
 	(test (eq (instance-name ?epoca_pref) ?epoca))
 	?cp <- (object (is-a Cuadro-puntuacion) (cuadro-instancia ?c_inst) (puntuacion ?p))
 	(test (eq (instance-name ?c) (instance-name ?c_inst)))
-	(not (procesado-cuadro-epoca ?c ?epoca_pref)) ; nose si és necessari
+	(not (procesado-cuadro-epoca ?c ?epoca_pref))
 	=>
 	(bind ?nueva_p (+ ?p 1))
 	(send ?cp put-puntuacion ?nueva_p)
@@ -1848,6 +1851,7 @@
 	(export ?ALL)
 );
 
+; crea un hecho por dia de visita
 (defrule generar-sol::crear-dias
 	(declare (salience 10))
 	(not (visita))
@@ -1860,6 +1864,7 @@
 	(assert (visita (dias $?lista_dias)))
 )
 
+; asignacion de cuadros a dias de visita
 (defrule generar-sol::asignar-cuadros-a-dias
 	(grupo (tipo ?tip) (grado_conocimiento ?gc))
 	(visita (dias $?lista_dias))
@@ -1892,6 +1897,7 @@
 	(assert (cuadros_asignados_a_dias))
 )
 
+; ordena los cuadros de un dia por salas
 (defrule generar-sol::ordenar-dias-por-salas
 	(cuadros_asignados_a_dias)
 	(visita (dias $?lista_dias))
@@ -1905,6 +1911,7 @@
 	(assert (sol_creada))
 )
 
+; comunica la solucion al usuario
 (defrule generar-sol::imprimir-sol
 	(sol_creada)
 	(visita (dias $?lista_dias))
