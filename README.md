@@ -2,7 +2,9 @@
 
 Second deliverable of IA (Artificial Intelligence), an UPC-FIB subject on quadrimester Q1 2020/2021
 
-Contributors:
+Program developed with CLIPS that given some data related a museum visit, organizes automatically the best route to visit artworks.
+
+# Contributors:
 
 - Marçal Comas Oliver
 - Gerard Palomares Castells
@@ -18,3 +20,4 @@ Contributors:
 2. Go to File -> Load... (Ctrl+L) and select "museum.clp" of this repository.
 3. Go to Execution -> Reset (Ctrl+E) to instantiate the instances.
 4. Go to Execution -> Run (Ctrl+R) and answer the questions!
+
